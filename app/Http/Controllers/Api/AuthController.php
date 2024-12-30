@@ -34,7 +34,7 @@ class AuthController extends Controller
 
         $user = Auth::user();
         $data['token'] = $user->createToken(env("APP_KEY"))->plainTextToken;
-        $data['user'] = $user;
+        $data['user'] = UserResource::make($user);
 
         return $this->sendResponse('Login successfully', data: $data);
     }
@@ -124,7 +124,7 @@ class AuthController extends Controller
 
             Auth::loginUsingId($user->id);
             $data['token'] = $user->createToken(env("APP_KEY"))->plainTextToken;
-            $data['user'] = $user;
+            $data['user'] = UserResource::make($user);
 
             return $this->sendResponse('Register successfully', data: $data, code: 200);
         }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\RequestLoggerMiddleware;
 use App\Traits\ApiTrait;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
@@ -16,7 +17,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->api(append: [
+            RequestLoggerMiddleware::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->renderable(function (Exception $e, $request) {
