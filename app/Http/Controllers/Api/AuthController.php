@@ -46,7 +46,7 @@ class AuthController extends Controller
         ]);
 
         $user = User::find(Auth::id());
-        $user->password = bcrypt('password');
+        $user->password = bcrypt($request->password);
         $user->save();
 
         return $this->sendResponse('Success ganti password');
