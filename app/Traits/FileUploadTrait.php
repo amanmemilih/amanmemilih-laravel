@@ -7,6 +7,6 @@ trait FileUploadTrait
     protected function uploadFileFromRequest($fileRequest, $filename, $foldername)
     {
         $filename = $filename . '.' . $fileRequest->getClientOriginalExtension();
-        return $fileRequest->storeAs($foldername, $filename);
+        return $fileRequest->storeAs($foldername, $filename, ['disk' => 'public']);
     }
 }

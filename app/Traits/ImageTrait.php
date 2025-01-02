@@ -56,15 +56,12 @@ trait ImageTrait
         $filename = rand(1000, 9999) . time() . '.' . $file->getClientOriginalExtension();
 
         $fileLocation = $file->storeAs($folderName, $filename, 'public');
-        Image::make('storage/' . $fileLocation)
-            ->resize(400, null, function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            })
-            // ->fit(400, 300, function ($constraint) {
-            //     $constraint->upsize();
-            // }, 'center')
-            ->save('storage/' . $fileLocation);
+        // Image::make('storage/blogs/59161735727804.png')
+        //     ->resize(400, null, function ($constraint) {
+        //         $constraint->aspectRatio();
+        //         $constraint->upsize();
+        //     })
+        //     ->save('storage/blogs/59161735727804.png');
 
         return $filename;
     }

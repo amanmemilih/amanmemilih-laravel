@@ -1,76 +1,41 @@
 
-@extends('layouts.auth')
+<!DOCTYPE html>
+<html lang="id">
 
-@section('content')
-  <div class="container-fluid p-0">
-    <div class="row">
-      <div class="col-12">
-        <div class="login-card">
-          <form class="theme-form login-form" method="POST" action="{{ route('login.store') }}">
-            @csrf
-            <h4>Login</h4>
-            <h6>Selamat datang! silahkan login menggunakan akun anda.</h6>
-            <div class="form-group">
-              <label>Email</label>
-              <div class="input-group">
-                <span class="input-group-text"><i class="fa-regular fa-id-card"></i></span>
-                <input class="form-control @error('email') is-invalid @enderror" name="email" type="text" required placeholder="Ketik email" value="{{ old('email') }}" />
-                @error('email')
-                  <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                  </span>
-                @enderror
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Password</label>
-              <div class="input-group">
-                <span class="input-group-text"><i class="fa-regular fa-lock-keyhole"></i></span>
-                <input class="form-control" type="password" name="password" required placeholder="Ketik password" />
-                @error('password')
-                  <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                  </span>
-                @enderror
-              </div>
-            </div>
-            <div class="form-group">
-              <button class="btn btn-primary btn-block" type="submit">Sign in</button>
-            </div>
-          </form>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container vh-100 d-flex justify-content-center align-items-center">
+        <div class="card p-4 shadow" style="width: 100%; max-width: 400px;">
+            <h3 class="text-center mb-4">Login</h3>
+            <form class="theme-form login-form" method="POST" action="{{ route('login.store') }}">
+              @csrf
+                <div class="mb-3 text-start">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" name="email" placeholder="Masukkan email Anda" required>
+                    @error('email')
+                      <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                      </span>
+                    @enderror
+                </div>
+                <div class="mb-3 text-start">
+                    <label for="password" class="form-label">Kata Sandi</label>
+                    <input type="password" class="form-control" name="password" placeholder="Masukkan kata sandi Anda" required>
+                </div>
+                <button type="submit" class="btn btn-danger w-100">Login</button>
+                <div class="text-center mt-3">
+                </div>
+            </form>
         </div>
-      </div>
     </div>
-  </div>
-@endsection
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 
-@section('contents')
-<form class="user" method="POST" action="{{ route('login') }}">
-  @csrf
-  <div class="form-group">
-    <input type="text" class="form-control form-control-user  @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" required autocomplete="off" placeholder="Ketik email" autofocus>
-    @error('email')
-      <span class="invalid-feedback" role="alert">
-        <strong>{{ $message }}</strong>
-      </span>
-    @enderror
-  </div>
-  <div class="form-group">
-    <input id="password" type="password" class="form-control form-control-user  @error('password') is-invalid @enderror" name="password" required placeholder="Ketik Password" autocomplete="off">
-    @error('password')
-      <span class="invalid-feedback" role="alert">
-        <strong>{{ $message }}</strong>
-      </span>
-    @enderror
-  </div>
-  <div class="form-group">
-    <div class="custom-control custom-checkbox small">
-      <input class="custom-control-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-      <label class="custom-control-label" for="remember">Ingatkan Saya</label>
-    </div>
-  </div>
-  <button type="submit" class="btn btn-primary btn-user btn-block">
-    Masuk
-  </button>
-</form>
-@endsection
+</html>
+

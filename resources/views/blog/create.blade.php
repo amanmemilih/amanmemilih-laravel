@@ -5,7 +5,7 @@
   <link href="https://cdn.jsdelivr.net/npm/froala-editor@latest/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
 @endsection
 
-@section('js')
+@section('script')
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/froala-editor@latest/js/froala_editor.pkgd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Dropify/0.2.2/js/dropify.min.js" integrity="sha512-8QFTrG0oeOiyWo/VM9Y8kgxdlCryqhIxVeRpWSezdRRAvarxVtwLnGroJgnVW9/XBRduxO/z1GblzPrMQoeuew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>
@@ -20,68 +20,62 @@
 @endsection
 
 @section('content')
-<div class="container-fluid">
-  <div class="page-title">
-    <div class="row">
-      <div class="col-12 col-sm-6">
-        <h3>Add Blog</h3>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- Container-fluid starts-->
-<div class="container-fluid">
-  <div class="card">
-    <div class="card-body">
+  <div class="container-fluid mb-5">
+    <div class="page-title">
       <div class="row">
-        <div class="col-md-12">
-          <div class="date-picker">
-            <form class="theme-form" action="{{ route('blogs.store') }}" method="POST" enctype="multipart/form-data">
-              @csrf
-              <div class="mb-3 row g-3">
-                <label class="col-sm-3 col-form-label text-sm-end">Thumbnail</label>
-                <div class="col-xl-5 col-sm-9">
-                  <div class="input-group  @error('thumbnail') is-invalid border-danger @enderror">
-                    <input type="file" class="dropify " name="thumbnail" data-default-file="" data-show-remove="false" data-allowed-file-extensions="png jpg jpeg" data-max-file-size="1M" />
-                    @error('thumbnail')
-                      <div class="text-danger">{{ $message }}</div>
-                    @enderror
-                  </div>
-                </div>
-              </div>
-              <div class="mb-3 row g-3">
-                <label class="col-sm-3 col-form-label text-sm-end">Title</label>
-                <div class="col-xl-5 col-sm-9">
-                  <div class="input-group">
-                    <input class="form-control @error('title') is-invalid border-danger @enderror" name="title" type="text" placeholder="Enter title" value="{{ old('title') }}">
-                    @error('title')
-                      <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                  </div>
-                </div>
-              </div>
-              <div class="mb-3 row g-3">
-                <label class="col-sm-3 col-form-label text-sm-end">Content</label>
-                <div class="col-xl-5 col-sm-9">
-                  <div class="input-group">
-                    <textarea class="bg-secondary" name="body">{{ old('body') }}</textarea>
-                  </div>
-                </div>
-              </div>
-              <div class="mb-3 row g-3">
-                <label class="col-sm-3 col-form-label text-sm-end"></label>
-                <div class="col-xl-5 col-sm-9">
-                  <div class="input-group">
-                    <button class="btn btn-primary" type="submit">Submit</button>
-                  </div>
-                </div>
-              </div>
-            </form>
-          </div>
+        <div class="col-12 col-sm-6">
+          <h3>Tambah Berita</h3>
         </div>
       </div>
     </div>
   </div>
-</div>
-<!-- Container-fluid Ends-->
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="date-picker">
+          <form class="theme-form" action="{{ route('blogs.store') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <div class="mb-3 row g-3">
+              <label class="col-sm-3 col-form-label text-sm-end">Thumbnail</label>
+              <div class="col-xl-5 col-sm-9">
+                <div class="input-group  @error('thumbnail') is-invalid border-danger @enderror">
+                  <input type="file" class="dropify " name="thumbnail" data-default-file="" data-show-remove="false" data-allowed-file-extensions="png jpg jpeg" data-max-file-size="1M" />
+                  @error('thumbnail')
+                    <div class="text-danger">{{ $message }}</div>
+                  @enderror
+                </div>
+              </div>
+            </div>
+            <div class="mb-3 row g-3">
+              <label class="col-sm-3 col-form-label text-sm-end">Title</label>
+              <div class="col-xl-5 col-sm-9">
+                <div class="input-group">
+                  <input class="form-control @error('title') is-invalid border-danger @enderror" name="title" type="text" placeholder="Enter title" value="{{ old('title') }}">
+                  @error('title')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                  @enderror
+                </div>
+              </div>
+            </div>
+            <div class="mb-3 row g-3">
+              <label class="col-sm-3 col-form-label text-sm-end">Content</label>
+              <div class="col-xl-5 col-sm-9">
+                <div class="input-group">
+                  <textarea class="bg-secondary" name="body">{{ old('body') }}</textarea>
+                </div>
+              </div>
+            </div>
+            <div class="mb-3 row g-3">
+              <label class="col-sm-3 col-form-label text-sm-end"></label>
+              <div class="col-xl-5 col-sm-9">
+                <div class="input-group">
+                  <button class="btn btn-primary" type="submit">Submit</button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 @endsection

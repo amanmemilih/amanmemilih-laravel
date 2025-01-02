@@ -14,11 +14,25 @@ class BlogController extends Controller
     public function index()
     {
         $data = Blog::get();
-        return $this->sendResponse('Blog successfully retrieved', data: $data);
+        return $this->sendResponse('Blog successfully retrieved', data: array_map(function ($row) {
+            return [
+                'id' => $row['id'],
+                'thumbnail' => asset('storage/blogs/' . $row['thumbnail']),
+                'created_at' => $row['created_at'],
+                'body' => $row['body'],
+                'title' => $row['title'],
+            ];
+        }, $data->toArray()));
     }
 
     public function show(Blog $blog)
     {
-        return $this->sendResponse('Blog successfully retrieved', data: $blog);
+        return $this->sendResponse('Blog successfully retrieved', data: [
+            'id' => $blog->id,
+            'thumbnail' => asset('storage/blogs/' . $blog->thumbnail),
+            'created_at' => $blog->created_at,
+            'body' => $blog->body,
+            'title' => $blog->title,
+        ]);
     }
 }

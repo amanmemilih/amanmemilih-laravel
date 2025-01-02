@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helpers\UserHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\DpdDocument;
 use App\Models\DprdDistrictDocument;
 use App\Models\DprDocument;
@@ -25,11 +27,11 @@ class DocumentController extends Controller
 
         // Array of document models with names
         $documents = [
-            ['model' => PresidentialDocument::class, 'name' => 'PILPRES'],
-            ['model' => DprDocument::class, 'name' => 'PILEG DPR'],
-            ['model' => DprdProvinceDocument::class, 'name' => 'PILEG DPRD PROVINSI'],
-            ['model' => DprdDistrictDocument::class, 'name' => 'PILEG DPRD KAB/KOTA'],
-            ['model' => DpdDocument::class, 'name' => 'PEMILU DPD'],
+            ['model' => PresidentialDocument::class, 'name' => 'PILPRES', 'election_type' => 'presidential'],
+            ['model' => DprDocument::class, 'name' => 'PILEG DPR', 'election_type' => 'dpr'],
+            ['model' => DprdProvinceDocument::class, 'name' => 'PILEG DPRD PROVINSI', 'election_type' => 'dprd_province'],
+            ['model' => DprdDistrictDocument::class, 'name' => 'PILEG DPRD KAB/KOTA', 'election_type' => 'dprd_district'],
+            ['model' => DpdDocument::class, 'name' => 'PEMILU DPD', 'election_type' => 'presidential', 'election_type' => 'dpd'],
         ];
 
         $results = [];
@@ -47,6 +49,7 @@ class DocumentController extends Controller
                 'id' => @$doc->id ?? null,
                 'name' => $docInfo['name'],
                 'status' => $status,
+                'election_type' => $docInfo['election_type'],
             ];
         }
 
@@ -61,7 +64,7 @@ class DocumentController extends Controller
 
         switch ($request->election_type) {
             case 'presidential':
-                $data = PresidentialDocument::with('presidential_votes')->findOrfail($id);
+                $data = PresidentialDocument::with('presidential_votes', 'presidential_votes.presidential_candidat')->findOrfail($id);
                 break;
             case 'dpr':
                 $data = DprDocument::findOrfail($id);
@@ -90,8 +93,58 @@ class DocumentController extends Controller
         return $this->sendResponse('success', data: [
             'status' => $data->status,
             'election_type' => $electionType,
-            'votes' => $data->presidential_votes,
+            'votes' => array_map(function ($row) {
+                return [
+                    'candidat_name' => $row['presidential_candidat']['name'],
+                    'candidat_no' => $row['presidential_candidat']['no'],
+                    'total_votes' => $row['total_votes'],
+                ];
+            }, $data->presidential_votes->toArray()),
+            'documents' => array_map(function ($row) {
+                return asset('storage/' . $row);
+            }, json_decode($data->document_c1)),
+            'tps' => UserResource::make($data->user),
         ]);
+    }
+
+    public function verified(int $id, Request $request)
+    {
+        $request->validate([
+            'election_type' => 'required|in:presidential,dpr,dprd_province,dprd_district,dpd',
+        ]);
+
+        switch ($request->election_type) {
+            case 'presidential':
+                $model = PresidentialDocument::with('presidential_votes', 'presidential_votes.presidential_candidat')->findOrfail($id);
+                $model->status = 1;
+                $model->save();
+                break;
+            case 'dpr':
+                $model = DprDocument::findOrfail($id);
+                $model->status = 1;
+                $model->save();
+                break;
+            case 'dprd_province':
+                $model = DprdProvinceDocument::findOrfail($id);
+                $model->status = 1;
+                $model->save();
+                break;
+            case 'dprd_district':
+                $model = DprdDistrictDocument::findOrfail($id);
+                $model->status = 1;
+                $model->save();
+                break;
+            case 'dpd':
+                $model = DpdDocument::findOrfail($id);
+                $model->status = 1;
+                $model->save();
+                break;
+            default:
+                return $this->sendResponse('Invalid election type', code: 400);
+                break;
+        }
+
+        return $this->sendResponse('document successfully verified');
     }
 
     public function store(Request $request)
