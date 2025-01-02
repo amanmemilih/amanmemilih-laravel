@@ -42,8 +42,7 @@ class AuthController extends Controller
     public function changePassword(Request $request)
     {
         $request->validate([
-            'password' => 'required',
-            'password_confirmation' => 'required|confirmed',
+            'password' => 'required|confirmed',
         ]);
 
         $user = User::find(Auth::id());
