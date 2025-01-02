@@ -12,6 +12,12 @@ class BlogController extends Controller
 {
     use ImageTrait;
 
+    public function index()
+    {
+        $data['blog'] = Blog::get();
+        return view('blog.index', $data);
+    }
+
     public function create()
     {
         return view('blog.create');

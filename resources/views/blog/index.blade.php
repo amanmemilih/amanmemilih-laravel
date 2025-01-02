@@ -47,6 +47,10 @@
 
 @section('script')
   <script>
+    function handleDelete() {
+      
+    }
+
     $(document).ready( function () {
       const url = 'http://localhost:8001/api'
         $('#dataTable').DataTable({

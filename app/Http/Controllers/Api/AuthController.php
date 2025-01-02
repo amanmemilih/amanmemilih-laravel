@@ -39,6 +39,20 @@ class AuthController extends Controller
         return $this->sendResponse('Login successfully', data: $data);
     }
 
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'password' => 'required',
+            'password_confirmation' => 'required|confirmed',
+        ]);
+
+        $user = User::find(Auth::id());
+        $user->password = bcrypt('password');
+        $user->save();
+
+        return $this->sendResponse('Success ganti password');
+    }
+
     public function generateRecoveryKey(Request $request)
     {
         $request->validate([
