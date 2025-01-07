@@ -44,6 +44,7 @@ Route::middleware('auth:sanctum', 'verified')->group(function () {
     Route::get('/documents', [DocumentController::class, 'index']);
     Route::post('/documents', [DocumentController::class, 'store']);
     Route::post('/documents/{document}/verified', [DocumentController::class, 'verified']);
+    Route::delete('/documents/{document}', [DocumentController::class, 'destroy']);
 });
 
 // Blogs

@@ -37,7 +37,7 @@ class DocumentController extends Controller
         $results = [];
 
         foreach ($documents as $docInfo) {
-            $doc = $docInfo['model']::where('user_id', $userId)->first();
+            $doc = $docInfo['model']::where('user_id', $userId)->latest()->first();
 
             if ($doc) {
                 $status = $doc->status == 1 ? 2 : 1; // 2: Verified, 1: Uploaded but not verified
@@ -93,13 +93,13 @@ class DocumentController extends Controller
         return $this->sendResponse('success', data: [
             'status' => $data->status,
             'election_type' => $electionType,
-            'votes' => array_map(function ($row) {
+            'votes' => $request->election_type == 'presidential' ? array_map(function ($row) {
                 return [
                     'candidat_name' => $row['presidential_candidat']['name'],
                     'candidat_no' => $row['presidential_candidat']['no'],
                     'total_votes' => $row['total_votes'],
                 ];
-            }, $data->presidential_votes->toArray()),
+            }, $data->presidential_votes->toArray()) : [],
             'documents' => array_map(function ($row) {
                 return asset('storage/' . $row);
             }, json_decode($data->document_c1)),
@@ -256,5 +256,40 @@ class DocumentController extends Controller
 
         DB::commit();
         return $this->sendResponse('Document uploaded successfully');
+    }
+
+    public function destroy(int $id, Request $request)
+    {
+        $request->validate([
+            'election_type' => 'required|in:presidential,dpr,dprd_province,dprd_district,dpd',
+        ]);
+
+        switch ($request->election_type) {
+            case 'presidential':
+                $model = PresidentialDocument::with('presidential_votes', 'presidential_votes.presidential_candidat')->findOrfail($id);
+                $model->delete();
+                break;
+            case 'dpr':
+                $model = DprDocument::findOrfail($id);
+                $model->delete();
+                break;
+            case 'dprd_province':
+                $model = DprdProvinceDocument::findOrfail($id);
+                $model->delete();
+                break;
+            case 'dprd_district':
+                $model = DprdDistrictDocument::findOrfail($id);
+                $model->delete();
+                break;
+            case 'dpd':
+                $model = DpdDocument::findOrfail($id);
+                $model->delete();
+                break;
+            default:
+                return $this->sendResponse('Invalid election type', code: 400);
+                break;
+        }
+
+        return $this->sendResponse('document successfully verified');
     }
 }

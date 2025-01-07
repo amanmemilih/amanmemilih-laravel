@@ -47,12 +47,13 @@
 
 @section('script')
   <script>
-    function handleDelete() {
-      
+    const url = 'http://localhost:8001/api';
+    function handleDelete(id) {
+      $('#delete-form').attr('action', 'http://localhost:8080/blogs/' + id);
     }
+    
 
     $(document).ready( function () {
-      const url = 'http://localhost:8001/api'
         $('#dataTable').DataTable({
           ajax: {
             url: url + '/blogs',
@@ -73,7 +74,7 @@
               render: function (data, type, row, meta) {
                   return `
                   <button class="btn btn-warning text-light btn-xs" onclick="window.location.href='/blogs/${data}/edit'" data-original-title="btn btn-danger btn-xs" title="">Edit</button>
-                  <button class="btn btn-danger btn-xs" type="button" data-original-title="btn btn-danger btn-xs" title="" onclick="handleDelete(${data}})" data-bs-toggle="modal" data-bs-target="#delete-modal">Delete</button>
+                  <button class="btn btn-danger btn-xs" type="button" data-original-title="btn btn-danger btn-xs" title="" onclick="handleDelete('${data}')" data-bs-toggle="modal" data-bs-target="#delete-modal">Delete</button>
                   `;
               },
             }
