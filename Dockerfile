@@ -1,37 +1,58 @@
-FROM php:8.3-alpine3.19
+############################
+# Stage 1: Builder
+############################
+FROM composer:2.2 AS builder
 
-# Locate the application
-WORKDIR /var/www
+# Set working directory inside the container
+WORKDIR /app
 
-# Instal php depedencies
-ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
-RUN chmod +x /usr/local/bin/install-php-extensions && \
-    install-php-extensions gd zip pdo pdo_mysql swoole pcntl
+# Copy only the composer files initially; this helps cache dependency installation
+COPY composer.json composer.lock ./
 
-# Get latest Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# Install PHP dependencies without dev packages, optimize autoloading, and disable scripts
+RUN composer install --no-dev --prefer-dist --no-scripts --optimize-autoloader
 
-# Install system dependencies
+# Now bring in the rest of your application code
+COPY . .
+
+# (Optional) Run any build or optimization steps needed for production.
+# For example, you might pre-cache configurations and routes:
+RUN php artisan config:cache && php artisan route:cache
+
+############################
+# Stage 2: Production
+############################
+FROM php:8.2-fpm-alpine
+
+# Install system-level dependencies and PHP extensions required by your app.
+# Use apk’s no-cache flag to keep the image size minimal.
 RUN apk add --no-cache \
-    nodejs \
-    npm
+    libzip-dev libpng libjpeg-turbo freetype brotli-dev && \
+    docker-php-ext-configure zip && \
+    docker-php-ext-install pdo_mysql zip 
 
-# Install node dependencies for watching
-RUN npm install -g chokidar-cli
+# Install PHP opcache for performance
+RUN docker-php-ext-install opcache pcntl
 
-# Set npm global path
-ENV PATH="=/home/node/.npm-global/bin:${PATH}"
+# Install dependencies needed to compile Swoole extension
+RUN apk add --no-cache $PHPIZE_DEPS
 
-# Set PHP memory_limit to -1
-RUN echo "memory_limit=-1" > /usr/local/etc/php/conf.d/memory-limit.ini
-RUN echo "upload_max_filesize=1G" > /usr/local/etc/php/conf.d/uploads.ini
-RUN echo "post_max_size=1G" > /usr/local/etc/php/conf.d/uploads.ini
+# Install the Swoole extension from PECL and enable it
+RUN pecl install swoole && docker-php-ext-enable swoole
 
-# Set permissions
-# RUN chown -R www-data:www-data /var/www/storage
+# Set the working directory
+WORKDIR /app
 
-# Optional: Remove pcntl from disabled functions in php.ini
-RUN sed -i 's/disable_functions = pcntl_*/disable_functions = /' /usr/local/etc/php/php.ini || true
+# Copy the built application from the builder stage
+COPY --from=builder /app /app
+COPY --from=builder /app/.env /app/.env
 
-# CMD ["tail", "-f", "/dev/null"]
-CMD ["php", "artisan", "octane:start", "--host=0.0.0.0", "--watch"]
+# Ensure proper permissions for Laravel’s storage and bootstrap/cache directories
+RUN chown -R www-data:www-data storage bootstrap/cache
+
+# Expose the port that Octane will listen on (default is 8000)
+EXPOSE 8000
+
+# Command to run Laravel Octane with Swoole when the container starts.
+# Adjust the --server option if you are using RoadRunner or any other server.
+CMD ["php", "artisan", "octane:start", "--server=swoole", "--host=0.0.0.0", "--port=8000"]
