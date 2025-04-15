@@ -22,8 +22,8 @@ jobs:
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
       - run: |
-          docker build . -t ${{ secrets.AZURE_URL }}/lidm2025:${{ github.ref_name }}
-          docker push ${{ secrets.AZURE_URL }}/lidm2025:${{ github.ref_name }}
+          docker build . -t ${{ secrets.AZURE_URL }}/amanmemilih256:${{ github.ref_name }}
+          docker push ${{ secrets.AZURE_URL }}/amanmemilih256:${{ github.ref_name }}
 
   # deploy_k3s:
   #   runs-on: ubuntu-24.04
