@@ -32,6 +32,7 @@ RUN apk add --no-cache \
 RUN apk add --no-cache --virtual .build-deps \
     libzip-dev \
     brotli-dev \
+    libstdc++ \
     $PHPIZE_DEPS && \
     docker-php-ext-configure zip && \
     docker-php-ext-install pdo_mysql zip opcache pcntl && \
