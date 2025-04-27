@@ -37,7 +37,7 @@ RUN apk add --no-cache --virtual .build-deps \
     libstdc++ \
     openssl \
     pcre \
-    zlib \
+    zlib && \
     docker-php-ext-configure zip && \
     docker-php-ext-install pdo_mysql zip opcache pcntl && \
     pecl install swoole && docker-php-ext-enable swoole && \
