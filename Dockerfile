@@ -53,6 +53,8 @@ RUN chown -R www-data:www-data storage bootstrap/cache
 
 RUN php artisan octane:install --server=swoole
 
+RUN php artisan key:generate
+
 # Expose the port that Laravel Octane will listen on (default 8000)
 EXPOSE 8000
 
