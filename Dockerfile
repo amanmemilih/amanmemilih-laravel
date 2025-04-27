@@ -40,6 +40,8 @@ RUN apk add --no-cache --virtual .build-deps \
 
 # Copy the built application from the builder stage
 COPY --from=builder /app /app
+# Use .env.example as a default if .env is missing
+COPY --from=builder /app/.env.example /app/.env
 
 # Ensure proper permissions for storage and cache directories
 RUN chown -R www-data:www-data storage bootstrap/cache
