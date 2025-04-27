@@ -32,8 +32,12 @@ RUN apk add --no-cache \
 RUN apk add --no-cache --virtual .build-deps \
     libzip-dev \
     brotli-dev \
-    libstdc++ \
     $PHPIZE_DEPS && \
+    apk add --no-cache \
+    libstdc++ \
+    openssl \
+    pcre \
+    zlib \
     docker-php-ext-configure zip && \
     docker-php-ext-install pdo_mysql zip opcache pcntl && \
     pecl install swoole && docker-php-ext-enable swoole && \
@@ -46,6 +50,8 @@ COPY --from=builder /app/.env.example /app/.env
 
 # Ensure proper permissions for storage and cache directories
 RUN chown -R www-data:www-data storage bootstrap/cache
+
+RUN php artisan octane:install --server=swoole
 
 # Expose the port that Laravel Octane will listen on (default 8000)
 EXPOSE 8000
