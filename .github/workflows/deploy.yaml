@@ -25,22 +25,19 @@ jobs:
           docker build . -t ${{ secrets.AZURE_URL }}/amanmemilih256:${{ github.ref_name }}
           docker push ${{ secrets.AZURE_URL }}/amanmemilih256:${{ github.ref_name }}
 
-  # deploy_k3s:
-  #   runs-on: ubuntu-24.04
-  #   needs: build
-  #   steps:
-  #     - name: Checkout GitHub Action
-  #       uses: actions/checkout@main
+  deploy_k3s:
+    runs-on: ubuntu-24.04
+    needs: build
+    steps:
+      - name: Checkout GitHub Action
+        uses: actions/checkout@main
 
-  #     - name: SSH Into Digitalocean Droplets and Update Deployment
-  #       uses: appleboy/ssh-action@v1
-  #       with:
-  #         host: ${{ secrets.DROPLET_IP }}
-  #         username: ${{ secrets.DROPLET_USERNAME }}
-  #         key: ${{ secrets.DROPLET_SSH_KEY }}
-  #         script: |
-  #           cd deployment/lidm/
-  #           kubectl set image deployment/lidm-api-deployment lidm-api=lidm2025.azurecr.io/lidm2025:${{ github.ref_name }}
-  #           export LIDM_API_POD_NAME=$(kubectl get pods -n lidm --no-headers --field-selector=status.phase==Running -o custom-columns=":metadata.name")
-  #           kubectl delete pod $LIDM_API_POD_NAME -n lidm
-  #           kubectl apply -f deployment.yaml -n lidm
+      - name: SSH Into Digitalocean Droplets and Update Deployment
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DROPLET_IP }}
+          username: ${{ secrets.DROPLET_USERNAME }}
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          script: |
+            echo "Deploying to K3s Cluster"
+            kubectl get po -A
