@@ -4,7 +4,7 @@
 set -e
 
 # Clear and cache config
-php artisan cache:clear
+php artisan config:clear
 php artisan config:cache
 
 # Start Octane server
