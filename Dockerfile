@@ -51,12 +51,7 @@ COPY --from=builder /app/.env.example /app/.env
 # Ensure proper permissions for storage and cache directories
 RUN chown -R www-data:www-data storage bootstrap/cache
 
-RUN php artisan config:clear
-RUN php artisan cache:clear
-
 RUN php artisan octane:install --server=swoole
-
-RUN php artisan key:generate
 
 # Expose the port that Laravel Octane will listen on (default 8000)
 EXPOSE 8000
