@@ -48,6 +48,11 @@ COPY --from=builder /app /app
 # Use .env.example as a default if .env is missing
 COPY --from=builder /app/.env.example /app/.env
 
+# Copy the entrypoint script and give it execute permissions
+COPY --from=builder ./app/entrypoint.sh /app/entrypoint.sh
+
+RUN chmod +x /app/entrypoint.sh
+
 # Ensure proper permissions for storage and cache directories
 RUN chown -R www-data:www-data storage bootstrap/cache
 
@@ -57,5 +62,4 @@ RUN php artisan octane:install --server=swoole
 EXPOSE 8000
 
 # Run Laravel Octane with Swoole
-# CMD ["php", "artisan", "octane:start", "--server=swoole", "--host=0.0.0.0", "--port=8000"]
 CMD ["tail", "-f", "/dev/null"]
