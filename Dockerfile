@@ -62,4 +62,5 @@ RUN php artisan key:generate
 EXPOSE 8000
 
 # Run Laravel Octane with Swoole
-CMD ["php", "artisan", "octane:start", "--server=swoole", "--host=0.0.0.0", "--port=8000"]
+# CMD ["php", "artisan", "octane:start", "--server=swoole", "--host=0.0.0.0", "--port=8000"]
+CMD ["tail", "-f", "/dev/null"]
