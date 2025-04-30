@@ -4,8 +4,9 @@
 set -e
 
 # Clear and cache config
+echo APP_KEY= >> .env
+php artisan key:generate
 php artisan config:clear
-php artisan config:cache
 
 # Start Octane server
 php artisan octane:start --server=swoole --host=0.0.0.0 --port=8000
