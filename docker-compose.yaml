@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel-octane
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/var/www
+      - ./storage:/var/www/storage
+      - ./public:/var/www/public
+    working_dir: /var/www
+    command: php artisan octane:start --host=0.0.0.0 --watch
+    restart: unless-stopped
