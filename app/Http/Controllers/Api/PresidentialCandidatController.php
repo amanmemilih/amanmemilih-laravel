@@ -39,7 +39,7 @@ class PresidentialCandidatController extends Controller
                 'id' => $row['id'],
                 'name' => $row['name'],
                 'no' => $row['no'],
-                'image' => asset('storage/' . $row['image']),
+                'image' => $row['image'],
                 'vote_percentage' => $row['vote_percentage'],
             ];
         }, $data->toArray());
