@@ -7,6 +7,7 @@ set -e
 echo APP_KEY= >> .env
 php artisan key:generate
 php artisan config:clear
+php artisan storage:link
 
 # Start Octane server
 php artisan octane:start --server=swoole --host=0.0.0.0 --port=8000
