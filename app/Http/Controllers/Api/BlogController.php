@@ -14,6 +14,11 @@ class BlogController extends Controller
     public function index()
     {
         $data = Blog::get();
+
+        if ($data->isEmpty()) {
+            return $this->sendResponse('No blogs found', [], 404);
+        }
+
         return $this->sendResponse('Blog successfully retrieved', data: array_map(function ($row) {
             return [
                 'id' => $row['id'],
@@ -23,6 +28,19 @@ class BlogController extends Controller
                 'title' => $row['title'],
             ];
         }, $data->toArray()));
+    }
+
+    public function destroy($id)
+    {
+        $blog = Blog::find($id);
+
+        if (!$blog) {
+            return $this->sendResponse('Blog not found', [], 404);
+        }
+
+        $blog->delete();
+
+        return $this->sendResponse('Blog successfully deleted');
     }
 
     public function show(Blog $blog)

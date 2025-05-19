@@ -1,0 +1,46 @@
+version: "3.8"
+
+networks:
+  amanmemilih:
+    driver: bridge
+
+services:
+  api:
+    networks:
+      - amanmemilih
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/var/www
+
+  nginx:
+    networks:
+      - amanmemilih
+    image: nginx:mainline-alpine3.18-slim
+    volumes:
+      - ./:/var/www
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - 8080:8000
+
+  db:
+    networks:
+      - amanmemilih
+    image: mysql:8.0.40
+    environment:
+      - MYSQL_DATABASE=root
+      - MYSQL_ALLOW_EMPTY_PASSWORD=TRUE
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - ./mysql/mysqldata:/var/lib/mysql
+
+  phpmyadmin:
+    networks:
+      - amanmemilih
+    image: phpmyadmin:latest
+    environment:
+      - PMA_HOST=db
+      - UPLOAD_LIMIT=300m
+    ports:
+      - 8077:80

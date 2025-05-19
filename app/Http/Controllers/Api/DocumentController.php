@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Helpers\UserHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use App\Models\DpdDocument;
@@ -11,6 +10,7 @@ use App\Models\DprDocument;
 use App\Models\DprdProvinceDocument;
 use App\Models\PresidentialDocument;
 use App\Models\PresidentialVote;
+use App\Services\Web3Service;
 use App\Traits\ApiTrait;
 use App\Traits\FileUploadTrait;
 use Illuminate\Http\Request;
@@ -20,6 +20,13 @@ use Illuminate\Support\Facades\DB;
 class DocumentController extends Controller
 {
     use ApiTrait, FileUploadTrait;
+
+    protected $web3Service;
+
+    public function __construct(Web3Service $web3Service)
+    {
+        $this->web3Service = $web3Service;
+    }
 
     public function index()
     {
@@ -180,6 +187,12 @@ class DocumentController extends Controller
                     'user_id' => $user->id,
                 ]);
 
+                try {
+                    $tes = $this->web3Service->uploadDocument(json_encode($documentC1), $user->id);
+                } catch (\Exception $e) {
+                    return $this->sendResponse('Failed to upload document to blockchain : ' . $e->getMessage(), code: 500);
+                }
+
                 foreach ($request->vote as $row) {
                     PresidentialVote::create([
                         'presidential_document_id' => $documentId->id,
@@ -254,7 +267,7 @@ class DocumentController extends Controller
                 break;
         }
 
-        DB::commit();
+        // DB::commit();
         return $this->sendResponse('Document uploaded successfully');
     }
 

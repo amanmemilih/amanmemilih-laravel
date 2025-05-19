@@ -14,13 +14,18 @@ class BlogController extends Controller
 
     public function index()
     {
-        $data['blog'] = Blog::get();
-        return view('blog.index', $data);
+        $blogs = Blog::latest()->get();
+        return view('blog.index', compact('blogs'));
     }
 
     public function create()
     {
         return view('blog.create');
+    }
+
+    public function show(Blog $blog)
+    {
+        return view('blog.show', compact('blog'));
     }
 
     public function edit(Blog $blog)
@@ -42,7 +47,6 @@ class BlogController extends Controller
             'title' => $request->title,
             'body' => $request->body,
             'thumbnail' => $image,
-            'admin_id' => Auth::id(),
         ]);
 
         return redirect()->route('blogs.index')->with('success', 'Action successfully completed.');

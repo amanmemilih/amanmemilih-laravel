@@ -12,7 +12,7 @@ trait ApiTrait
         $response = ['code' => $code, 'message' => $message, 'success' => str_starts_with((string)$code, '2')];
         if ($data || $showDataWhenNull) $response = array_merge($response, ['data' => $data]);
 
-        return response()->json($response, 200);
+        return response()->json($response, $code);
     }
 
     protected function setCookies($key, $value)

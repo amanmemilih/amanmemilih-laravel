@@ -50,3 +50,4 @@ Route::middleware('auth:sanctum', 'verified')->group(function () {
 // Blogs
 Route::get('/blogs', [BlogController::class, 'index']);
 Route::get('/blogs/{blog}', [BlogController::class, 'show']);
+Route::delete('/blogs/{blog}', [BlogController::class, 'destroy']);
